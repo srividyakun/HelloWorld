@@ -1,4 +1,4 @@
-package com.pluralsights.organized;
+package ConditionalLogicAndBlockStatement;
 
 public class VariableInitialize {
     public static void main(String[] args) {
