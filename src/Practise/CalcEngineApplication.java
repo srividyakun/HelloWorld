@@ -1,32 +1,19 @@
+package Practise;
+
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class CalcEngineApplication {
-    public static void main(String[] args) {
-        //performs operation with user input
-        executeInteractively();
 
-        double[] leftVals = {100.0d,25.0d,225.0d,11.0d};
-        double[] rightVals = {50.0d,92.0d,17.0d,3.0d};
-        char[] opCodes = {'a','b','c','d'};
-        double result[] = new double[opCodes.length];
-
-        if(args.length == 0) {
-            for (int i = 0; i < opCodes.length; i++) {
-                result[i] = execute(opCodes[i],leftVals[i], rightVals[i]);
-                // System.out.println(result[i]);
-            }
-            for (double currentResult : result) {
-                System.out.println("currentResult : " + currentResult);
-            }
-            // when given args in terminal ex:java src/CalcEngineApplication.java a 20 30, result will be 50
-        }else if(args.length==3){
-            handleCommandLine(args);
-        }else{
-            System.out.println("Please provode an operation code and 2 numeric values");
-        }
+    public static MathEquation create(double leftVal, double rightVal, char opCode) {
+        MathEquation mathEquation = new MathEquation();
+        mathEquation.setLeftVal(leftVal);
+        mathEquation.setRightVal(rightVal);
+        mathEquation.opCode = opCode;
+        return mathEquation;
     }
 
-    private static void handleCommandLine(String[] args) {
+    public static void handleCommandLine(String[] args) {
         char opCode = args[0].charAt(0);
         double leftVal = Double.parseDouble(args[1]);
         double rightVal = Double.parseDouble(args[2]);
@@ -34,7 +21,7 @@ public class CalcEngineApplication {
         System.out.println(result);
     }
 
-    private static double execute(char opCodes,double leftVals, double rightVals) {
+    public static double execute(char opCodes,double leftVals, double rightVals) {
         double result;
         switch (opCodes){
             case 'a':
@@ -59,13 +46,16 @@ public class CalcEngineApplication {
 
     static double valueFromWord(String word) {
         String[] numberword = {"zero","one","two","three","four","five","six","seven","eight","nine"};
-        double value = 0;
+        double value = -1d;
         for(int index = 0; index<numberword.length;index++){
 
             if(numberword[index].equalsIgnoreCase(word)){
                 value = index;
                 break;
             }
+        }
+        if(value == -1d){
+            value = Double.parseDouble(word);
         }
         return value;
     }
@@ -95,10 +85,14 @@ public class CalcEngineApplication {
         String[] splitedText = inputText.split(" ");
 
         char operationCharater =  opCodeFromString(splitedText[0]);
-        char symbol =  symbolFromOpCode(operationCharater);
-        double leftValue = valueFromWord(splitedText[1]);
-        double rightValue = valueFromWord(splitedText[2]);
-        double result = execute(operationCharater,leftValue,rightValue);
+        if(operationCharater == 'w'){
+            handelWhen(splitedText);
+        }else {
+            char symbol = symbolFromOpCode(operationCharater);
+            double leftValue = valueFromWord(splitedText[1]);
+            double rightValue = valueFromWord(splitedText[2]);
+            double result = execute(operationCharater, leftValue, rightValue);
+
         /*StringBuilder stringBuilder = new StringBuilder(20);
         stringBuilder.append(leftValue);
         stringBuilder.append(" ");
@@ -108,8 +102,17 @@ public class CalcEngineApplication {
         stringBuilder.append(" = ");
         stringBuilder.append(result);
         String toltalResult = stringBuilder.toString();*/
-        String toltalResult = String.format("%.2f %c %.2f = %.2f",leftValue,symbol,rightValue,result);
+            String toltalResult = String.format("%.2f %c %.2f = %.2f", leftValue, symbol, rightValue, result);
 
-                System.out.println("the result is : "+toltalResult);
+            System.out.println("the result is : " + toltalResult);
+        }
+    }
+
+    private static void handelWhen(String[] splitedText) {
+        LocalDate startDate = LocalDate.parse(splitedText[1]);
+        long daysToAdd = (long)valueFromWord(splitedText[2]);
+        LocalDate newDate = startDate.plusDays(daysToAdd);
+        String output = String.format("%s plus %d days is %s",startDate,daysToAdd,newDate);
+        System.out.println(output);
     }
 }
